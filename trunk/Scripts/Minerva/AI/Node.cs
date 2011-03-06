@@ -14,23 +14,30 @@ public class Node : MonoBehaviour
     // Start Node?
     public bool start   = false;
     public bool end     = false;
-    private int _f = 0;
-    private int _g = 0;
-    private int _h = 0;
+    private float _f = 0;
+    private float _g = 0;
+    private float _h = 0;
+    private Node _parent;
 
-    public int F
+    public Node Parent
+    {
+        get { return _parent; }
+        set { _parent = value; }
+    }
+
+    public float F
     {
         get { return _f; }
         set { _f = value; }
     }
 
-    public int G
+    public float G
     {
         get { return _g; }
         set { _g = value; }
     }
 
-    public int H
+    public float H
     {
         get { return _h; }
         set { _h = value; }
@@ -73,7 +80,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 10;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position); ;
                 if(Add) Neighbors.Add(neighbor);
                 print("Back added");
             }
@@ -93,7 +100,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 10;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Forward added");
             }
@@ -113,7 +120,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 10;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Right added");
             }
@@ -133,7 +140,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 10;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Left added");
             }
@@ -153,7 +160,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 14;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Back Left added");
             }
@@ -173,7 +180,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 14;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Back right added");
             }
@@ -193,7 +200,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 14;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Forward Left added");
             }
@@ -213,7 +220,7 @@ public class Node : MonoBehaviour
             {
                 Neighbor neighbor = new Neighbor();
                 neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
-                neighbor.Cost = 14;
+                neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Forward right added");
             }
@@ -232,9 +239,9 @@ public class Node : MonoBehaviour
 
     public void updateTextInfo()
     {
-        transform.Find("tF").gameObject.GetComponent<TextMesh>().text = _f.ToString();
-        transform.Find("tG").gameObject.GetComponent<TextMesh>().text = _g.ToString();
-        transform.Find("tH").gameObject.GetComponent<TextMesh>().text = _h.ToString();
+        transform.Find("tF").gameObject.GetComponent<TextMesh>().text = ((int)_f).ToString();
+        transform.Find("tG").gameObject.GetComponent<TextMesh>().text = ((int)_g).ToString();
+        transform.Find("tH").gameObject.GetComponent<TextMesh>().text = ((int)_h).ToString();
     }
 
     public void DebugNeighbors()
