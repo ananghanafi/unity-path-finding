@@ -11,7 +11,9 @@ public class Node : MonoBehaviour
     public bool Closed = false;
     // Add neighbors
     public bool Add = true;
-
+    // Start Node?
+    public bool start   = false;
+    public bool end     = false;
     private int _f = 0;
     private int _g = 0;
     private int _h = 0;
@@ -38,6 +40,10 @@ public class Node : MonoBehaviour
     {
         FindConnections();
         Add = false;
+        if(start)
+            transform.Find("nodeCube").gameObject.renderer.material.color = Color.green;
+        if(end)
+            transform.Find("nodeCube").gameObject.renderer.material.color = Color.red;
     }
 
     private void FindConnections()
