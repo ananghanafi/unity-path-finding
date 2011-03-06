@@ -1,0 +1,10 @@
+#summary Links for a better understanding.
+#labels Phase-QA
+
+= Introduction =
+
+The following links will help to explain the algoritms
+
+== A`*` ==
+
+http://www.policyalmanac.org/games/aStarTutorial.htm
