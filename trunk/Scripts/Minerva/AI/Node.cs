@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Each navigation point is called node
-public class Node : MonoBehaviour
+// Each navigation point is called NodeM
+public class NodeM : MonoBehaviour
 {
-    // The node have different neighbors, the neighbors
+    // The NodeM have different neighbors, the neighbors
     // are stored in a List
     public List<Neighbor> Neighbors = new List<Neighbor>();
-    // Check if the node is on the closed list
+    // Check if the NodeM is on the closed list
     public bool Closed = false;
     // Add neighbors
     public bool Add = true;
-    // Start Node?
+    // Start NodeM?
     public bool start   = false;
     public bool end     = false;
     private float _f = 0;
     private float _g = 0;
     private float _h = 0;
-    private Node _parent;
+    private NodeM _parent;
 
-    public Node Parent
+    public NodeM Parent
     {
         get { return _parent; }
         set { _parent = value; }
@@ -48,9 +48,9 @@ public class Node : MonoBehaviour
         FindConnections();
         Add = false;
         if(start)
-            transform.Find("nodeCube").gameObject.renderer.material.color = Color.green;
+            transform.Find("NodeMCube").gameObject.renderer.material.color = Color.green;
         if(end)
-            transform.Find("nodeCube").gameObject.renderer.material.color = Color.red;
+            transform.Find("NodeMCube").gameObject.renderer.material.color = Color.red;
     }
 
     private void FindConnections()
@@ -76,10 +76,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.red);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position); ;
                 if(Add) Neighbors.Add(neighbor);
                 print("Back added");
@@ -96,10 +96,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.blue);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Forward added");
@@ -116,10 +116,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.green);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Right added");
@@ -136,10 +136,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.yellow);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Left added");
@@ -156,10 +156,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.cyan);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Back Left added");
@@ -176,10 +176,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.black);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Back right added");
@@ -196,10 +196,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.magenta);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Forward Left added");
@@ -216,10 +216,10 @@ public class Node : MonoBehaviour
         Debug.DrawRay(transform.position, transformDirection * mToHit, Color.white);
         if (Physics.Raycast(transform.position, transformDirection, out hit, mToHit))
         {
-            if (hit.collider.gameObject.transform.parent.gameObject.name == "node")
+            if (hit.collider.gameObject.transform.parent.gameObject.name == "NodeM")
             {
                 Neighbor neighbor = new Neighbor();
-                neighbor.Node = hit.collider.gameObject.transform.parent.gameObject;
+                neighbor.NodeM = hit.collider.gameObject.transform.parent.gameObject;
                 neighbor.Cost = Vector3.Distance(transform.position, hit.collider.gameObject.transform.parent.transform.position);
                 if (Add) Neighbors.Add(neighbor);
                 print("Forward right added");
@@ -248,7 +248,7 @@ public class Node : MonoBehaviour
     {
         for (int i = 0; i < Neighbors.Count; i++)
         {
-            Transform n = Neighbors[i].Node.transform.Find("nodeCube");
+            Transform n = Neighbors[i].NodeM.transform.Find("NodeMCube");
             GameObject parent = n.gameObject;
             parent.renderer.material.color = Color.red;
         }
@@ -257,6 +257,6 @@ public class Node : MonoBehaviour
 
 public class Neighbor
 {
-    public GameObject Node;
+    public GameObject NodeM;
     public float Cost;
 } ;
