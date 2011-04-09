@@ -46,7 +46,7 @@ public class AI : MonoBehaviour {
                 LookNeighbors(StartNode);
                 SetNeighborsG(StartNode);
                 SetNeighborsF(StartNode);
-                DoSearching(startNode);
+                DoSearching(StartNode);
                 SStarted = true;
                 return;
             }
@@ -56,7 +56,7 @@ public class AI : MonoBehaviour {
 
     private void DoSearching(Node n)
     {
-        Node move;
+        Node move = new Node();
         float f = 1000000; // Solve this
         for (int i = 0; i < n.Neighbors.Count; i++)
         {
