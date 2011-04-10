@@ -61,7 +61,7 @@ public class AI : MonoBehaviour {
                 _currentSpeed = runSpeed;
 
             float distanceToTarget = Vector3.Distance(transform.position, aStar.path[i].transform.position);
-            if (distanceToTarget <= .25f)
+            if (distanceToTarget <= .35f)
             {
                 aStar.path.Remove(aStar.path[i]);
                 if (i <= 0)
@@ -70,6 +70,10 @@ public class AI : MonoBehaviour {
                     rigidbody.velocity = Vector3.zero;
                     return;
                 }
+            }
+            else
+            {
+                Debug.Log("Still going: " + name);
             }
             if(i < aStar.path.Count && i >=  0)
             {
