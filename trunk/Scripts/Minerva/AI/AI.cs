@@ -3,178 +3,124 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class AI : MonoBehaviour {
+    // We define the state of the element
+    public AIState State;                       // State Machine
+    public float distanceUntilFade  = 3;
+    public float fadeSpeed          = 5;
+    public float walkSpeed          = 5;
+    public float runSpeed           = 10;
+    public float turnSpeed          = 10;
+    public Vector3 endPosition;
 
-    private GameObject[] Nodes;
-    private bool BStartNode = false;
-    private bool BEndNode = false;
-    private Node StartNode;
-    private Node EndNode;
-    private List<Node> OpenList = new List<Node>();
-    private List<Node> ClosedList = new List<Node>();
-    private bool SStarted = false;
-	// Use this for initialization
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (Input.GetKey("n"))
+    // A star
+    public AStar aStar = new AStar();
+    public bool isGoing;
+
+    private float _currentSpeed;
+
+    public bool usingAStar;                     // A Star
+    public bool Idle{get; set;}                // Idle
+
+    private const float DISTANCE_FROM_SELF_FOR_RANDOM = 4;  // Wander
+    private const float DISTANCE_UNTIL_GO_TO_IDLE = 1;
+
+    void Start()
+    {
+        _currentSpeed = runSpeed;
+    }
+
+    void Update()
+    {
+        if(!isGoing)
         {
-            // Find all nodes
-            if (Nodes == null)
+            if (Input.GetMouseButtonDown(0))
             {
-                //print("Looking for nodes");
-                FindNodes();
-                //PrintNodes();
-                print("Search for nodes ended");
-                return;
-            }
-
-            // Looks for start node and end node
-            if (!BStartNode && !BEndNode)
-            {
-                //print("Look for start and end node");
-                FindStartNode();
-                FindEndNode();
-                SetNodesH();
-                print("Search ended for start and end node");
-                return;
-            }
-            // If search has not started
-            if(!SStarted)
-            {
-                LookNeighbors(StartNode);
-                SetNeighborsG(StartNode);
-                SetNeighborsF(StartNode);
-                DoSearching(StartNode);
-                SStarted = true;
-                return;
+                endPosition = GameObject.Find("Goal").transform.position;
             }
             
-        }
-	}
+            AStarNode startNode = AStarNode.GetClosestNode(transform.position);
+            
+            AStarNode endNode = AStarNode.GetClosestNode(endPosition);
 
-    private void DoSearching(Node n)
-    {
-        Node move = new Node();
-        float f = 1000000; // Solve this
-        for (int i = 0; i < n.Neighbors.Count; i++)
+            aStar.FindPath(startNode, endNode);
+            startNode.renderer.material.color = Color.green;
+            endNode.renderer.material.color = Color.red;
+            isGoing = true;
+        }
+        // A*
+        if(aStar != null && aStar.path != null)
         {
-            Node _t = n.Neighbors[i].Node.GetComponent("Node") as Node;
-            if (_t.F < f)
+            var i = aStar.path.Count - 1;
+
+            if(i == 0)
             {
-                f = _t.F;
-                move = _t;
+                if(Vector3.Distance(transform.position, aStar.path[i].transform.position) <= distanceUntilFade)
+                    _currentSpeed = Mathf.Lerp(_currentSpeed, walkSpeed, Time.deltaTime * fadeSpeed);
+            }
+            else
+                _currentSpeed = runSpeed;
+
+            float distanceToTarget = Vector3.Distance(transform.position, aStar.path[i].transform.position);
+            if (distanceToTarget <= .25f)
+            {
+                aStar.path.Remove(aStar.path[i]);
+                if (i <= 0)
+                {
+                    isGoing = false;
+                    rigidbody.velocity = Vector3.zero;
+                    return;
+                }
+            }
+            if(i < aStar.path.Count && i >=  0)
+            {
+                transform.rotation = Quaternion.Slerp(  transform.rotation,
+                                                        Quaternion.LookRotation(aStar.path[i].transform.position - transform.position),
+                                                        Time.deltaTime * turnSpeed);
             }
         }
-        
-        LookNeighbors(move);
-        SetNeighborsG(move);
-        SetNeighborsF(move);
+
+        Movement();
+        Steering();
     }
 
-    private void SetNeighborsG(Node n)
+    public void Steering()
     {
-        for (int i = 0; i < n.Neighbors.Count; i++)
+        if (Physics.Raycast(transform.position, transform.forward, 2))
         {
-            Node _t = n.Neighbors[i].Node.GetComponent("Node") as Node;
-            _t.G = n.Neighbors[i].Cost;
-        }
-    }
-
-    private void SetNeighborsF(Node n)
-    {
-        for (int i = 0; i < n.Neighbors.Count; i++)
-        {
-            Node _t = n.Neighbors[i].Node.GetComponent("Node") as Node;
-            _t.F = _t.G + _t.H;
-        }
-    }
-
-    private void SetNodesH()
-    {
-        for (int i = 0; i < Nodes.Length; i++)
-        {
-            Node n  = Nodes[i].GetComponent("Node") as Node;
-            n.H = Vector3.Distance(n.transform.position, EndNode.transform.position);
-        }
-    }
-
-    private void LookNeighbors(Node n)
-    {
-        for (int i = 0; i < n.Neighbors.Count; i++)
-        {
-            Node _t = n.Neighbors[i].Node.GetComponent("Node") as Node;
-            if (!IsItOnOpenList(_t))
+            var direction = transform.right; // right value of var?
+            if (Physics.Raycast(transform.position, (transform.forward + transform.right).normalized, 2)) // Left
             {
-                _t.Parent = n;
-                OpenList.Add(_t);
-            }
-        }
-        OpenList.Remove(n);
-        n.Closed = true;
-        ClosedList.Add(n);
-        print("Size of Open List: " + OpenList.Count);
-        print("Size of Closed List: " + ClosedList.Count);
-    }
-
-    private bool IsItOnOpenList(Node n)
-    {
-        bool answer = false;
-        for (int i = 0; i < OpenList.Count; i++)
-        {
-            if (n == OpenList[i])
-            {
-                answer = true;
-                break;
-            }
-        }
-        return answer;
-    }
-
-    private void FindNodes()
-    {
-        Nodes = GameObject.FindGameObjectsWithTag("Node");
-    }
-
-    private void PrintNodes()
-    {
-        for (int i = 0; i < Nodes.Length; i++)
-        {
-            GameObject n = Nodes[i];
-            print(n.name);
-        }
-    }
-
-    private void FindStartNode()
-    {
-        for (int i = 0; i < Nodes.Length; i++)
-        {
-            GameObject go = Nodes[i];
-            Node n = go.GetComponent("Node") as Node;
-            if (n.start)
-            {
-                StartNode = n;
-                BStartNode = true;
-                OpenList.Add(StartNode);
-                return;
+                direction = -direction;
+                if (Physics.Raycast(transform.position, (transform.forward - transform.right).normalized, 2)) // Back
+                {
+                    direction = -transform.forward;
+                }
+                transform.rotation = Quaternion.Slerp(transform.rotation,
+                                                        Quaternion.LookRotation(direction),
+                                                        Time.deltaTime * turnSpeed);
             }
         }
     }
 
-    private void FindEndNode()
+    public void Movement()
     {
-        for (int i = 0; i < Nodes.Length; i++)
+        if (!Idle)
         {
-            GameObject go = Nodes[i];
-            Node n = go.GetComponent("Node") as Node;
-            if (n.end)
-            {
-                EndNode = n;
-                BEndNode = true;
-                return;
-            }
+            rigidbody.AddRelativeForce(Vector3.forward * _currentSpeed); // Move forward if not idle
+        }
+
+        if (rigidbody.velocity.magnitude > _currentSpeed * .3f && _currentSpeed > walkSpeed) // If We are walking we are going to speed up
+        {
+            rigidbody.velocity = transform.forward * _currentSpeed;
         }
     }
+};
 
+// States of the element
+// Can be Idle, AStarWander or wonder
+public enum AIState
+{
+    Idle,
+    AStarWander,
+    Wander
 };
