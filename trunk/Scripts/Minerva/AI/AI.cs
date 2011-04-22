@@ -42,13 +42,14 @@ public class AI : MonoBehaviour {
             
             AStarNode endNode = AStarNode.GetClosestNode(endPosition);
 
-            aStar.FindPath(startNode, endNode);
+            aStar.FindPathDJ(startNode, endNode);
+            //aStar.FindPath(startNode, endNode);
             startNode.renderer.material.color = Color.green;
             endNode.renderer.material.color = Color.red;
             isGoing = true;
         }
         // A*
-        if(aStar != null && aStar.path != null)
+        if(aStar != null && (aStar.path != null) )
         {
             var i = aStar.path.Count - 1;
 
@@ -61,6 +62,7 @@ public class AI : MonoBehaviour {
                 _currentSpeed = runSpeed;
 
             float distanceToTarget = Vector3.Distance(transform.position, aStar.path[i].transform.position);
+            
             if (distanceToTarget <= .35f)
             {
                 aStar.path.Remove(aStar.path[i]);

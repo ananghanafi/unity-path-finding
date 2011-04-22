@@ -104,6 +104,87 @@ public class AStar
             }
         }
     }
+    
+    public void FindPathDJ(AStarNode startNode, AStarNode endNode)
+    {
+        // Reset all scores
+        foreach (AStarNode node in AStarNode.nodes)
+        {
+            node.Reset();
+        }
+        // Set of nodes that were already evaluated (visited)
+        List<AStarNode> closed  = new List<AStarNode>();
+        // Set of nodes that are temptative to evaluation (not visited)
+        List<AStarNode> open    = new List<AStarNode>();
+        // Distance to the start node
+        startNode.gScore = 0;
+        // Distance to the goal node
+        startNode.hScore = DistanceBetweenNodes(startNode, endNode);
+        open.Add(startNode);
+        while (open.Count > 0)
+        {
+            // Sort by lowest f_scores
+            open.Sort(FScoreComparison);
+            // Select the node with the lowest score
+            AStarNode current = open[0];
+            // Remove current from the open set and add it to the closed set
+            open.Remove(current);
+            closed.Add(current);
+            // Set current node variable close to true
+            current.closed = true;
+            // Check if current evaluated node is end goal
+            if(current == endNode)
+            {
+                // It is!
+                path = new List<AStarNode>();
+                AStarNode node = endNode;
+                while (node != null)
+                {
+                    path.Add(node);
+                    node = node.parent;
+                }
+                printPath();
+                return;
+            } // it isn't!
+            // Now we are going to evaluate the current node neighbours
+            foreach (AStarNode neighbour in current.connections)
+            {
+                //Debug.Log("Neighbour that's being evaluated: " + neighbour.name);
+                // If neighbour is already close, meaning it's already in closed set we
+                // don't have to evaluate it);
+                if (neighbour.closed)
+                    continue;
+                // Calculate tentative g_score
+                float tentativeGScore = current.gScore + DistanceBetweenNodes(current, neighbour);
+                // Set tentativeIsBetter to false
+                bool tentativeIsBetter = false;
+                // If neighbour is not in the open set
+                if(!open.Contains(neighbour))
+                {
+                    // Add it to the open set
+                    open.Add(neighbour);
+                    tentativeIsBetter = true;
+                }
+                else if(tentativeGScore < neighbour.gScore)
+                {
+                    tentativeIsBetter = true;
+                }
+                else
+                {
+                    tentativeIsBetter = false;
+                }
+
+                if(tentativeIsBetter)
+                {
+                    // Set parent node
+                    neighbour.parent = current;
+                    neighbour.gScore = tentativeGScore;
+                    neighbour.hScore = DistanceBetweenNodes(neighbour, endNode);
+                    neighbour.fScore = neighbour.gScore/* + neighbour.hScore*/;
+                }
+            }
+        }
+    }
 
     private static float DistanceBetweenNodes(AStarNode from, AStarNode to)
     {
